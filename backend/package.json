@@ -1,0 +1,38 @@
+{
+  "name": "stmarysroatry",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client        && npm run build --prefix client",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "client-install": "npm install --prefix client",
+    "server": "node server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "body": "^5.1.0",
+    "concurrently": "^4.1.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "easy-pdf-merge": "^0.2.6",
+    "express": "^4.17.1",
+    "find-remove": "^3.1.0",
+    "html-pdf": "^3.0.1",
+    "mongodb": "^3.6.4",
+    "mongoose": "^5.11.19",
+    "mysql": "^2.18.1",
+    "node-cron": "^3.0.0",
+    "nodemailer": "^6.3.1",
+    "parser": "^0.1.4",
+    "pdf-merger-js": "^3.1.0",
+    "react-animate-height": "^2.0.17",
+    "react-burger-menu": "^2.6.11",
+    "react-responsive": "^7.0.0",
+    "stripe": "^8.138.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Navy",
+        "id": "Navy",
+        "class": "colour-picker-navy",
+        "class_selected": "colour-picker-navy-selected"
+    },
+    {
+        "name": "Black",
+        "id": "Black",
+        "class": "colour-picker-black",
+        "class_selected": "colour-picker-black-selected"
+    },
+    {
+        "name": "Walnut",
+        "id": "Walnut",
+        "class": "colour-picker-walnut-brown",
+        "class_selected": "colour-picker-walnut-brown-selected"
+    },
+    {
+        "name": "Sky Blue",
+        "id": "Sky-Blue",
+        "class": "colour-picker-sky-blue",
+        "class_selected": "colour-picker-sky-blue-selected"
+    },
+    {
+        "name": "White",
+        "id": "White",
+        "class": "colour-picker-white",
+        "class_selected": "colour-picker-white-selected"
+    },
+    {
+        "name": "Red",
+        "id": "Red",
+        "class": "colour-picker-red",
+        "class_selected": "colour-picker-red-selected"
+    },
+    {
+        "name": "Rasberry",
+        "id": "Rasberry",
+        "class": "colour-picker-rasberry",
+        "class_selected": "colour-picker-rasberry-selected"
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Navy",
+        "id": "Navy",
+        "class": "colour-picker-navy",
+        "class_selected": "colour-picker-navy-selected"
+    },
+    {
+        "name": "Black",
+        "id": "Black",
+        "class": "colour-picker-black",
+        "class_selected": "colour-picker-black-selected"
+    },
+    {
+        "name": "Walnut",
+        "id": "Walnut",
+        "class": "colour-picker-walnut-brown",
+        "class_selected": "colour-picker-walnut-brown-selected"
+    },
+    {
+        "name": "Camel",
+        "id": "Camel",
+        "class": "colour-picker-camel",
+        "class_selected": "colour-picker-camel-selected"
+    },
+    {
+        "name": "Natural",
+        "id": "Natural",
+        "class": "colour-picker-natural",
+        "class_selected": "colour-picker-natural-selected"
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Gold",
+        "id": "Gold",
+        "class": "colour-picker-gold",
+        "class_selected": "colour-picker-gold-selected"
+    },
+    {
+        "name": "Polished Steel",
+        "id": "Polished-Steel",
+        "class": "colour-picker-polished-steel",
+        "class_selected": "colour-picker-polished-steel-selected"
+    },
+    {
+        "name": "Matte Steel",
+        "id": "Matte-Steel",
+        "class": "colour-picker-matte-steel",
+        "class_selected": "colour-picker-matte-steel-selected"
+    },
+    {
+        "name": "Black",
+        "id": "Black",
+        "class": "colour-picker-black",
+        "class_selected": "colour-picker-black-selected"
+    }
+]
