@@ -1,197 +1,75 @@
-var mysql = require('mysql');
+const promisePool = require('../repositories/mysql');
 
 module.exports = {
     initUsersTable: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = `CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL, token VARCHAR(100), PRIMARY KEY (id));`
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            const [rows, fields] = await promisePool.query(sql);
 
-                let sql = `CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT, username VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL, token VARCHAR(100), PRIMARY KEY (id));`
+            console.log(`Rows in initUsersTable: ${JSON.stringify(rows)}`);
 
-                con.query(sql, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res("Created Users Table");
-                });
-            });
+            res("Created Users Table");
         });
     },
 
     addAdminUser: function (username, password) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'INSERT INTO users(username, password) VALUES(?,?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [username, password]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in addUser: ${JSON.stringify(rows)}`);
 
-                con.query("INSERT INTO users(username, password) VALUES(?,?);", [username, password], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        }); 
     },
 
     checkLogin: function (username, password) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'SELECT * FROM users WHERE username = (?) AND password = (?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [username, password]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in checkLogin: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM users WHERE username = (?) AND password = (?);", [username, password], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        }); 
     },
 
     checkExistingLogin: function (username, token) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'SELECT * FROM users WHERE username = (?) AND token = (?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [username, token]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in checkExistingLogin: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM users WHERE username = (?) AND token = (?);", [username, token], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        }); 
     },
 
     updateToken: function (username, password, token) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'UPDATE users SET token = (?) WHERE username = (?) AND password = (?);'
+            
+            const [rows, fields] = await promisePool.query(sql, [token, username, password]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in updateToken: ${JSON.stringify(rows)}`);
 
-                con.query("UPDATE users SET token = (?) WHERE username = (?) AND password = (?);", [token, username, password], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     removeToken: function (username, token) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'UPDATE users SET token = (?) WHERE username = (?) AND token = (?);'
+            
+            const [rows, fields] = await promisePool.query(sql, ["", username, token]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in removeToken: ${JSON.stringify(rows)}`);
 
-                con.query("UPDATE users SET token = (?) WHERE username = (?) AND token = (?);", ["", username, token], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 };

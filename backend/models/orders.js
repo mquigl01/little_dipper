@@ -1,138 +1,57 @@
-
-var mysql = require('mysql');
+const promisePool = require('../repositories/mysql');
 
 module.exports = {
     initOrdersTable: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
-        
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+        return new Promise(async (res, rej) => {
+            let sql = `CREATE TABLE IF NOT EXISTS orders (id INT AUTO_INCREMENT, product VARCHAR(200), status VARCHAR(20), notes TEXT, details TEXT, likes_dislikes TEXT, links TEXT, date_added DATETIME, first_name VARCHAR(100), last_name VARCHAR(100), po_box VARCHAR(10), address_line_one VARCHAR(200), address_line_two VARCHAR(200), postal_code VARCHAR(10), city VARCHAR(50), province VARCHAR(50), country VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), invoice VARCHAR(300), customer_id VARCHAR(100), card_id VARCHAR(100), stripe_product_id VARCHAR(100), stripe_price_id VARCHAR(100), PRIMARY KEY (id));`
 
-                let sql = `CREATE TABLE IF NOT EXISTS orders (id INT AUTO_INCREMENT, status VARCHAR(20), notes TEXT, details TEXT, likes_dislikes TEXT, links TEXT, date_added DATETIME, first_name VARCHAR(100), last_name VARCHAR(100), po_box VARCHAR(10), address_line_one VARCHAR(200), address_line_two VARCHAR(200), postal_code VARCHAR(10), city VARCHAR(50), province VARCHAR(50), country VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), invoice VARCHAR(300), customer_id VARCHAR(100), card_id VARCHAR(100), stripe_product_id VARCHAR(100), stripe_price_id VARCHAR(100), PRIMARY KEY (id));`
+            const [rows, fields] = await promisePool.query(sql);
 
-                con.query(sql, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
+            console.log(`Rows in initOrdersTable: ${JSON.stringify(rows)}`);
 
-                    res("Created Orders Table");
-                });
-            });
+            res("Created Orders Table");
         });
     },
 
     getOrders: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = `SELECT * FROM orders ORDER BY date_added ASC;`;
+            
+            const [rows, fields] = await promisePool.query(sql);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in getOrders: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM orders ORDER BY date_added ASC;", function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     getNewOrders: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+        return new Promise(async (res, rej) => {
+            let sql = "SELECT * FROM orders WHERE status = 'New' ORDER BY date_added ASC;";
+            
+            const [rows, fields] = await promisePool.query(sql);
 
-                con.query("SELECT * FROM orders WHERE status = 'New' ORDER BY date_added ASC;", function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
+            console.log(`Rows in getNewOrders: ${JSON.stringify(rows)}`);
 
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        });  
     },
 
     getOrderStatus: function (order_id) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'SELECT * FROM orders WHERE id = (?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [order_id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in getOrder: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM orders WHERE id = (?);", order_id, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        });  
     },
 
     addOrder: function (insert_json) {
+        console.log(insert_json)
         let card_id = insert_json.card_id;
         let details = insert_json.details;
         let likes_dislikes = insert_json.likes_dislikes;
@@ -151,41 +70,20 @@ module.exports = {
         let email = insert_json.email;
         let notes = insert_json.notes;
         let phone = insert_json.phone;
+        let product = insert_json.product;
         let customer_id = insert_json.stripe_id;
         let date_added = this.dateFormated();
         let status = "New";
 
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'INSERT INTO orders(product, status, details, likes_dislikes, links, notes, date_added, first_name, last_name, po_box, address_line_one, address_line_two, postal_code, city, province, country, email, phone, invoice, customer_id, card_id, stripe_product_id, stripe_price_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [product, status, details, likes_dislikes, links, notes, date_added, first_name, last_name, po_box, address_line_one, address_line_two, postal_code, city, province, country, email, phone, "", customer_id, card_id, stripe_product_id, stripe_price_id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in addOrder: ${JSON.stringify(rows)}`);
 
-                con.query("INSERT INTO orders(status, details, likes_dislikes, links, notes, date_added, first_name, last_name, po_box, address_line_one, address_line_two, postal_code, city, province, country, email, phone, invoice, customer_id, card_id, stripe_product_id, stripe_price_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", 
-                [status, details, likes_dislikes, links, notes, date_added, first_name, last_name, po_box, address_line_one, address_line_two, postal_code, city, province, country, email, phone, "", customer_id, card_id, stripe_product_id, stripe_price_id], 
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        }); 
     },
     
     updateOrder: function (insert_json) {
@@ -205,101 +103,39 @@ module.exports = {
         let details = insert_json.details;
         let id = insert_json.id;
 
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'UPDATE orders SET status = ?, details = ?, notes = ?, first_name = ?, last_name = ?, po_box = ?, address_line_one = ?, address_line_two = ?, postal_code = ?, city = ?, province = ?, country = ?, email = ?, phone = ? WHERE id = ?;'
+            
+            const [rows, fields] = await promisePool.query(sql, [status, details, notes, first_name, last_name, po_box, address_line_one, address_line_two, postal_code, city, province, country, email, phone, id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in updateOrder: ${JSON.stringify(rows)}`);
 
-                con.query("UPDATE orders SET status = ?, details = ?, notes = ?, first_name = ?, last_name = ?, po_box = ?, address_line_one = ?, address_line_two = ?, postal_code = ?, city = ?, province = ?, country = ?, email = ?, phone = ? WHERE id = ?;", 
-                [status, details, notes, first_name, last_name, po_box, address_line_one, address_line_two, postal_code, city, province, country, email, phone, id], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     updateOrderStatus: function (order_id, status, invoice) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'UPDATE orders SET status = ?, invoice = ? WHERE id = ?;'
+            
+            const [rows, fields] = await promisePool.query(sql, [status, invoice, order_id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in updateOrderStatus: ${JSON.stringify(rows)}`);
 
-                con.query("UPDATE orders SET status = ?, invoice = ? WHERE id = ?;", 
-                [status, invoice, order_id], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     deleteOrder: function (id) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'DELETE FROM orders WHERE id = (?);'
+            
+            const [rows, fields] = await promisePool.query(sql, [id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in deleteOrder: ${JSON.stringify(rows)}`);
 
-                con.query("DELETE FROM orders WHERE id = (?);", id, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        }); 
     },
 
     twoDigits: function (d) {

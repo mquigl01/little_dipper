@@ -1,103 +1,41 @@
 
-var mysql = require('mysql');
+const promisePool = require('../repositories/mysql');
 
 module.exports = {
     initColoursTable: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
-        
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+        return new Promise(async (res, rej) => {
+            let sql = `CREATE TABLE IF NOT EXISTS colours (id INT AUTO_INCREMENT, name VARCHAR(200), hex VARCHAR(50), date_added DATETIME, PRIMARY KEY (id));`
 
-                let sql = `CREATE TABLE IF NOT EXISTS colours (id INT AUTO_INCREMENT, name VARCHAR(200), hex VARCHAR(50), date_added DATETIME, PRIMARY KEY (id));`
+            const [rows, fields] = await promisePool.query(sql);
 
-                con.query(sql, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
+            console.log(`Rows in initColoursTable: ${JSON.stringify(rows)}`);
 
-                    res("Created colours Table");
-                });
-            });
+            res("Created Colours Table");
         });
     },
 
     getColours: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = `SELECT * FROM colours ORDER BY date_added ASC;`;
+            
+            const [rows, fields] = await promisePool.query(sql);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in getColours: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM colours ORDER BY date_added ASC;", function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     getColour: function (id) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'SELECT * FROM colours WHERE id = (?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in getColour: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM colours WHERE id = (?);", id, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        });  
     },
 
     addColour: function (insert_json) {
@@ -105,37 +43,15 @@ module.exports = {
         let hex = insert_json.hex;
         let date_added = this.dateFormated();
 
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'INSERT INTO colours(name, hex, date_added) VALUES(?,?,?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [name, hex, date_added]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in addColour: ${JSON.stringify(rows)}`);
 
-                con.query("INSERT INTO colours(name, hex, date_added) VALUES(?,?,?);", 
-                [name, hex, date_added], 
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        });    
     },
 
     twoDigits: function (d) {

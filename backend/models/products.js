@@ -1,143 +1,57 @@
-
-var mysql = require('mysql');
+const promisePool = require('../repositories/mysql');
 
 module.exports = {
     initProductsTable: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
-        
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+        return new Promise(async (res, rej) => {
+            let sql = `CREATE TABLE IF NOT EXISTS products (id INT AUTO_INCREMENT, name VARCHAR(200), images TEXT, description TEXT,  colours TEXT,  thread_colours TEXT,  hardware TEXT, date_added DATETIME, PRIMARY KEY (id));`
 
-                let sql = `CREATE TABLE IF NOT EXISTS products (id INT AUTO_INCREMENT, name VARCHAR(200), route VARCHAR(50), images TEXT, description TEXT,  colours TEXT,  thread_colours TEXT,  hardware TEXT, date_added DATETIME, PRIMARY KEY (id));`
+            const [rows, fields] = await promisePool.query(sql);
 
-                con.query(sql, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
+            console.log(`Rows in initProductsTable: ${JSON.stringify(rows)}`);
 
-                    res("Created products Table");
-                });
-            });
+            res("Created Products Table");
         });
     },
 
     getProducts: function () {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = `SELECT * FROM products ORDER BY date_added ASC;`;
+            
+            const [rows, fields] = await promisePool.query(sql);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in getProducts: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM products ORDER BY date_added ASC;", function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     getProduct: function (id) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'SELECT * FROM products WHERE id = (?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in getProduct: ${JSON.stringify(rows)}`);
 
-                con.query("SELECT * FROM products WHERE id = (?);", id, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        });  
     },
 
     addProduct: function (insert_json) {
         let name = insert_json.name;
         let description = insert_json.description;
         let images = insert_json.images;
-        let route = insert_json.route;
         let date_added = this.dateFormated();
 
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'INSERT INTO products(name, description, images, date_added) VALUES(?,?,?,?);';
+            
+            const [rows, fields] = await promisePool.query(sql, [name, description, images, date_added]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in addProduct: ${JSON.stringify(rows)}`);
 
-                con.query("INSERT INTO products(name, description, images, route, date_added) VALUES(?,?,?,?,?);", 
-                [name, description, images, route, date_added], 
-                function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
-        });
+            res(rows);
+        }); 
     },
     
     updateProduct: function (insert_json) {
@@ -145,69 +59,27 @@ module.exports = {
         let description = insert_json.description;
         let images = insert_json.images;
         let id = insert_json.id;
-        let route = insert_json.route;
 
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'UPDATE products SET name = ?, description = ?, images = ? WHERE id = ?;'
+            
+            const [rows, fields] = await promisePool.query(sql, [name, description, images, id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in updateProduct: ${JSON.stringify(rows)}`);
 
-                con.query("UPDATE products SET name = ?, description = ?, images = ?, route = ? WHERE id = ?;", 
-                [name, description, images, route, id], function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 
     deleteProduct: function (id) {
-        // Create a connection to the MySQL database
-        var con = mysql.createConnection({
-            host: process.env.SQL_HOST,
-            user: process.env.SQL_USER,
-            password: process.env.SQL_PASSWORD,
-            database: process.env.SQL_DATABASE
-        });
+        return new Promise(async (res, rej) => {
+            let sql = 'DELETE FROM products WHERE id = (?);'
+            
+            const [rows, fields] = await promisePool.query(sql, [id]);
 
-        return new Promise((res, rej) => {
-            con.connect(function(err) {
-                if (err) {
-                    console.log(err);
-                    let myError = {};
-                    myError.error = err;
-                    rej(myError);
-                }
+            console.log(`Rows in deleteProduct: ${JSON.stringify(rows)}`);
 
-                con.query("DELETE FROM products WHERE id = (?);", id, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        let myError = {};
-                        myError.error = err;
-                        rej(myError);
-                    }
-
-                    res(result);
-                });
-            });
+            res(rows);
         });
     },
 

@@ -2,7 +2,6 @@
 
 // Require all modules needed
 const express = require("express");
-var cron = require('node-cron');
 const app  = express();
 const path = require('path');
 require('dotenv').config()
@@ -16,7 +15,7 @@ const colours = require("./models/colours");
 const images = require("./models/images");
 
 // Expose the port specified in .env or port 5000
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 const connection_string = process.env.CONNECTION_STRING;
 
 
@@ -28,17 +27,6 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 if(process.env.NODE_ENV === 'production') {  app.use(express.static(path.join(__dirname, 'client/build')));  
   app.get('*', (req, res) => {    res.sendfile(path.join(__dirname = 'client/build/index.html'));  
 })}
-
-let email_password = "mquigley01";   
-var nodemailer = require('nodemailer');
-
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'mquigleyautoreply@gmail.com',
-    pass: email_password
-  }
-});
 
 /**
  * Stripe API requests
