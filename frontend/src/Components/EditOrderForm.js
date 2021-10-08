@@ -115,7 +115,7 @@ class EditOrderForm extends React.Component {
 
       let response = await updateOrderData(myJson);
 
-      if(response.warningCount === 0) {
+      if(response.insertId !== undefined && response.insertId !== 0) {
         await history.push("/AdminOrders");
         window.location.reload();
       }

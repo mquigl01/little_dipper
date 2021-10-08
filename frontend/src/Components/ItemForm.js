@@ -51,7 +51,7 @@ class ItemForm extends React.Component {
         this.changeEmail = this.changeEmail.bind(this);
         this.changeEngraving = this.changeEngraving.bind(this);
         this.changeCheckbox = this.changeCheckbox.bind(this);
-        this.orderBifold = this.orderBifold.bind(this);
+        this.orderItem = this.orderItem.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.changeThreadColour = this.changeThreadColour.bind(this);
         this.changeHardware = this.changeHardware.bind(this);
@@ -107,7 +107,7 @@ class ItemForm extends React.Component {
         this.setState({ checkBox: !currentState });
     }
 
-    async orderBifold() {
+    async orderItem() {
         this.setState({errorMessage: ""});
         console.log(this.state.engraving);
         console.log(this.state.colour);
@@ -136,6 +136,7 @@ class ItemForm extends React.Component {
                         myJSON.email = this.state.email;
                         myJSON.description = "";
                         myJSON.engraving = this.state.engraving;
+                        myJSON.product = this.state.name;
                         console.log(myJSON);
                         let result = await addOrder(myJSON);
                         console.log(result);
@@ -269,7 +270,7 @@ class ItemForm extends React.Component {
 
                                 <br />
                                 <br />
-                                <button onClick={this.orderBifold}>Quote</button>
+                                <button onClick={this.orderItem}>Quote</button>
                                 <br/>
                                 <label style={{color: "red"}}>{this.state.errorMessage}</label>
                             </div>

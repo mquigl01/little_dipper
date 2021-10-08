@@ -65,6 +65,9 @@ class OrdersForm extends React.Component {
               <TableCell style={{width: "80px"}}>
                 {order.status}
               </TableCell>
+              <TableCell style={{width: "80px"}}>
+                {order.product}
+              </TableCell>
               <TableCell>
                 {order.email}
               </TableCell>
@@ -117,6 +120,7 @@ class OrdersForm extends React.Component {
                       <TableRow>
                         <TableCell>ID</TableCell>
                         <TableCell>Status</TableCell>
+                        <TableCell>Product</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>Details</TableCell>
                         <TableCell>My Notes</TableCell>

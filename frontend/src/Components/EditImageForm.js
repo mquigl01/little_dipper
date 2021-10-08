@@ -74,7 +74,7 @@ class EditImageForm extends React.Component {
 
       let response = await updateImage(myJson);
 
-      if(response.warningCount === 0) {
+      if(response.insertId !== undefined && response.insertId !== 0) {
         await history.push("/AdminImages");
         window.location.reload();
       }

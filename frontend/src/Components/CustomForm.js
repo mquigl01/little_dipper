@@ -1,11 +1,9 @@
 import React from 'react';
-//import MediaQuery from 'react-responsive';
 import history from './history';
 import { Router } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Modal from 'react-modal';
-import Tooltip from '@material-ui/core/Tooltip';
 
 let modalTitle = "";
 let modalText = "";
@@ -34,7 +32,8 @@ class CustomForm extends React.Component {
             description: "",
             modalIsOpen: false,
             hardware_type: "",
-            name: "",
+            firstname: "",
+            lastname: "",
             type: "",
             likes_dislikes: "",
             links: "",
@@ -48,7 +47,8 @@ class CustomForm extends React.Component {
         this.closeModal = this.closeModal.bind(this);
         this.changeThreadColour = this.changeThreadColour.bind(this);
         this.changeHardware = this.changeHardware.bind(this);
-        this.changeName = this.changeName.bind(this);
+        this.changeFirstName = this.changeFirstName.bind(this);
+        this.changeLastName = this.changeLastName.bind(this);
         this.changeType = this.changeType.bind(this);
         this.changeLikesDislikes = this.changeLikesDislikes.bind(this);
         this.changeLinks = this.changeLinks.bind(this);
@@ -73,9 +73,14 @@ class CustomForm extends React.Component {
         this.setState({ links: event.target.value });
     }
 
-    changeName = (event) => {
+    changeFirstName = (event) => {
         this.setState({errorMessage: ""});
-        this.setState({ name: event.target.value });
+        this.setState({ firstname: event.target.value });
+    }
+
+    changeLastName = (event) => {
+        this.setState({errorMessage: ""});
+        this.setState({ lastname: event.target.value });
     }
 
     changeColour = (event) => {
@@ -126,13 +131,10 @@ class CustomForm extends React.Component {
                     this.setState({errorMessage: "Please select a colour."});
                 }
                 else {
-                    if(this.state.engraving.length > 10) {
-                        this.setState({errorMessage: "Engraving can not be more than 10 characters."});
-                    }
-                    else {
                         let myJSON = {};
                         myJSON.type = this.state.type;
-                        myJSON.name = this.state.name;
+                        myJSON.firstname = this.state.firstname;
+                        myJSON.lastname = this.state.lastname;
                         myJSON.colour = this.state.colour;
                         myJSON.thread_colour = this.state.thread_colour;
                         myJSON.hardware = this.state.hardware_type;
@@ -141,24 +143,21 @@ class CustomForm extends React.Component {
                         myJSON.links = this.state.links;
                         myJSON.email = this.state.email;
                         myJSON.engraving = "";
+                        myJSON.product = "Custom Item";
                         console.log(myJSON);
                         let result = await addOrder(myJSON);
                         console.log(result);
+
                         if (result.insertId !== undefined && result.insertId !== 0) {
-                        modalTitle = "Order Quote Sent!";
-                        modalText = "Thank you for ordering, I will get back to you as soon as I can!";
-                        this.setState({ modalIsOpen: true });
-                        this.setState({ engraving: "" });
-                        this.setState({ email: "" });
-                        this.setState({ colour: "Navy" });
-                        this.setState({ thread_colour: "Navy" });
+                            modalTitle = "Order Quote Sent!";
+                            modalText = "Thank you for ordering a quote, I will get back to you as soon as I can!";
+                            this.setState({ modalIsOpen: true, links: "", email: "", likes_dislikes: "", description: "", hardware: "", thread_colour: "", colour: "", firstname: "", lastname: "", type: "", checkBox: false});
                         }
                         else {
-                        modalTitle = "Order Quote Could Not Be Sent";
-                        modalText = "Due to some issue, your email was unable to send. Please try again.";
-                        this.setState({ modalIsOpen: true });
+                            modalTitle = "Order Quote Could Not Be Placed";
+                            modalText = "Due to some issue, your quote request could not be made. Please try again, or contact me directly.";
+                            this.setState({ modalIsOpen: true });
                         }
-                    }
                 }
             }
         }
@@ -185,8 +184,11 @@ class CustomForm extends React.Component {
                         < div style={{ margin: "20px", marginTop: "10px", marginBottom: "10px" }}>
                             <h3>Custom Order</h3>
                             <br/><br/>
-                                <label>Full Name:</label>
-                                <TextField style={{width: "200px", marginTop: "25px"}} value={this.state.name} onChange={this.changeName} />
+                                <label>First Name:</label>
+                                <TextField style={{width: "200px", marginTop: "25px"}} value={this.state.firstname} onChange={this.changeFirstName} />
+                                <br/>
+                                <label>Last Name:</label>
+                                <TextField style={{width: "200px", marginTop: "25px"}} value={this.state.lastname} onChange={this.changeLastName} />
                                 <br/>
                                 <label>Email:</label>
                                 <TextField style={{width: "200px", marginTop: "25px"}} value={this.state.email} onChange={this.changeEmail} />

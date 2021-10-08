@@ -62,7 +62,7 @@ class AddColoursForm extends React.Component {
 
       let response = await addColour(myJson);
 
-      if(response.warningCount === 0) {
+      if(response.insertId !== undefined && response.insertId !== 0) {
         await history.push("/AdminColours");
         window.location.reload();
       }

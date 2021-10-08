@@ -64,7 +64,7 @@ class AddProductsForm extends React.Component {
 
       let response = await addProduct(myJson);
 
-      if(response.warningCount === 0) {
+      if(response.insertId !== undefined && response.insertId !== 0) {
         await history.push("/Products");
         window.location.reload();
       }

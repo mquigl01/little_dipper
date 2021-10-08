@@ -17,6 +17,19 @@ class AboutForm extends React.Component {
               <h3>About</h3>
               <br /><br />
               <div style={{margin: "auto", width: "100%", textAlign: "left"}}>
+              <div style={{margin: "auto", textAlign: "center", display: "flex", justifyContent: "center", width: "100%", flexWrap: "wrap"}}>
+                <img  alt="Tara" style={{height: "200px", margin: "5px"}} src="./img/tara.JPG"/>
+                <img  alt="Bear" style={{height: "200px", margin: "5px"}} src="./img/bear.jpg"/>
+                <img  alt="Pebbles" style={{height: "200px", margin: "5px"}} src="./img/pebbles.jpg"/>
+                <img  alt="Tara and Pebbles" style={{ height: "200px", margin: "5px"}} src="./img/tara_pebbles.JPG"/>
+                <img  alt="Little Bear" style={{height: "200px", margin: "5px"}} src="./img/bear_little.jpg"/>
+                <img  alt="Sneaky Pebbles" style={{height: "200px", margin: "5px"}} src="./img/pebbles_sneak.jpg"/>
+              </div>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+
                 <p style={{maxWidth: "60%", fontWeight: "bold", margin: "auto"}}>
                 Tara Quigley – Owner, Designer, Maker
                 </p>
